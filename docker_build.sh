@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t basicapi .
+docker build -t chartapi .
