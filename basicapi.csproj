@@ -7,4 +7,8 @@
     <DockerfileRunArguments>-p "5337:5337"</DockerfileRunArguments>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="R.NET" Version="1.9.0" />
+  </ItemGroup>
+
 </Project>
