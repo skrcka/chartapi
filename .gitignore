@@ -5,6 +5,7 @@ project.lock.json
 *.pyc
 nupkg/
 .vs
+upload
 
 # Rider
 .idea

@@ -37,23 +37,34 @@ REngine.SetEnvironmentVariables();
 REngine engine = REngine.GetInstance();
 object _lock = new Object();
 
+Data data = new Data();
+if(File.Exists("./upload/file"))
+    data.File = true;
+
 app.MapGet("/", () => {
     if (Monitor.TryEnter(_lock, 10))
     {
         try
         {
             string[] result = engine.Evaluate("'Hi there .NET, from the R engine'").AsCharacter().ToArray();
-            return result[0];
+            data.Test = result[0];
         }
         finally
         {
             Monitor.Exit(_lock);
         }
     }
-    return "";
-
+    return Results.Json(data);
 });
 
+app.MapPost("/upload", async (HttpRequest request) =>
+{
+    var filePath = Path.Combine("./upload/", "file");
+
+    await using var writeStream = File.Create(filePath);
+    await request.BodyReader.CopyToAsync(writeStream);
+    data.File = true;
+});
 
 app.UseCors(devCorsPolicy);
 app.MapControllers();
