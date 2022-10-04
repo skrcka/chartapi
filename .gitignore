@@ -6,6 +6,8 @@ project.lock.json
 nupkg/
 .vs
 upload
+*.Rdata
+results
 
 # Rider
 .idea

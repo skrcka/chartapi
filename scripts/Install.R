@@ -1,0 +1,5 @@
+if (!require("BiocManager", quietly = TRUE))
+    chooseCRANmirror(ind = 77)
+    install.packages("BiocManager")
+    BiocManager::install(version = "3.15")
+    BiocManager::install("EBImage")

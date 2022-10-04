@@ -5,6 +5,8 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
 RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
 RUN apt-get install -y r-base
 RUN apt-get install -y build-essential
+COPY ./scripts/Install.R Intall.R
+RUN Rscript.exe Install.R
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS publish
 WORKDIR /src

@@ -1,3 +1,4 @@
 {
-    "window.title": "${rootName}${separator}${activeEditorShort}"
+    "window.title": "${rootName}${separator}${activeEditorShort}",
+    "r.lsp.promptToInstall": false
 }
