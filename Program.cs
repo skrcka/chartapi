@@ -1,7 +1,6 @@
 using RDotNet;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Http.Json;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -47,43 +46,44 @@ REngine.SetEnvironmentVariables();
 REngine engine = REngine.GetInstance();
 object _lock = new Object();
 
+var filePath = Path.Combine("./upload/", "file.png");
+string histScript = File.ReadAllText(@"./scripts/Histogram.R");
+
 Data data = new Data();
 if(File.Exists("./upload/file.png"))
     data.File = true;
 
-app.MapGet("/", () => {
+app.MapGet("/histogram", () => {
     if (Monitor.TryEnter(_lock, 10))
     {
         GenericVector res;
         try
         {
-            using (FileStream fs = File.OpenRead("./scripts/Histogram.R"))
-            {
-                res = engine.Evaluate(fs).AsList();
-            }
+            res = engine.Evaluate(histScript).AsList();
         }
         finally
         {
             Monitor.Exit(_lock);
         }
-        data.Rdata.Names = res.Names.ToList();
-        data.Rdata.Vectors.Clear();
+
+        data.RData.Names = res.Names.ToList();
+        data.RData.Vectors.Clear();
         for (int i = 0; i < res.Length; i++)
         {
-            data.Rdata.Vectors.Add(res[i].AsVector().ToList<dynamic>());
+            data.RData.Vectors.Add(res[i].AsVector().ToList<dynamic>());
         }
-        data.TestData = "test";
+        return Results.Json(data, null, "application/json", 200);
     }
-    //return JsonSerializer.Serialize(data);
-   return Results.Json(data, null, "application/json", 200);
+    return Results.Problem("REngine not ready!");
 });
 
 app.MapPost("/upload", async (HttpRequest request) =>
 {
-    var filePath = Path.Combine("./upload/", "file.png");
+    using (FileStream fs = File.Create(filePath))
+    {
+        await request.BodyReader.CopyToAsync(fs);
+    }
 
-    await using var writeStream = File.Create(filePath);
-    await request.BodyReader.CopyToAsync(writeStream);
     data.File = true;
 });
 

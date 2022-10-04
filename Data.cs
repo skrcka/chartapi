@@ -1,7 +1,7 @@
 public class RData
 {
-    public List<String> Names;
-    public List<dynamic> Vectors;
+    public List<String> Names { get; set; }
+    public List<dynamic> Vectors { get; }
 
     public RData()
     {
@@ -12,13 +12,12 @@ public class RData
 
 public class Data
 {
-    public string? TestData { get; set; }
-    public RData Rdata { get; set; }
+    public RData RData { get; }
     public bool File { get; set; }
 
     public Data()
     {
-        Rdata = new RData();
+        RData = new RData();
         File = false;
     }
 }
