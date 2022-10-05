@@ -53,6 +53,10 @@ Data data = new Data();
 if(File.Exists("./upload/file.png"))
     data.File = true;
 
+app.MapGet("/", () => {
+    return Results.Json(data, null, "application/json", 200);
+});
+
 app.MapGet("/histogram", () => {
     if (Monitor.TryEnter(_lock, 10))
     {
@@ -66,13 +70,14 @@ app.MapGet("/histogram", () => {
             Monitor.Exit(_lock);
         }
 
+        data.Func = "histogram";
         data.RData.Names = res.Names.ToList();
         data.RData.Vectors.Clear();
         for (int i = 0; i < res.Length; i++)
         {
             data.RData.Vectors.Add(res[i].AsVector().ToList<dynamic>());
         }
-        return Results.Json(data, null, "application/json", 200);
+        return Results.Ok();
     }
     return Results.Problem("REngine not ready!");
 });
