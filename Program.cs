@@ -84,13 +84,26 @@ app.MapGet("/histogram", () => {
 
 app.MapPost("/upload", async (HttpRequest request) =>
 {
+    if (!request.HasFormContentType)
+        return Results.BadRequest();
+
+    var form = await request.ReadFormAsync();
+    var formFile = form.Files["file"];
+
+    if (formFile is null || formFile.Length == 0)
+        return Results.BadRequest();
+
+    await using var stream = formFile.OpenReadStream();
+
+    var reader = new StreamContent(stream);
+    
     using (FileStream fs = File.Create(filePath))
     {
-        await request.BodyReader.CopyToAsync(fs);
+        await reader.CopyToAsync(fs);
     }
 
     data.File = true;
-    Results.Ok();
+    return Results.Ok();
 });
 
 app.MapGet("/reset", () =>
