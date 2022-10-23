@@ -90,6 +90,17 @@ app.MapPost("/upload", async (HttpRequest request) =>
     }
 
     data.File = true;
+    Results.Ok();
+});
+
+app.MapGet("/reset", () =>
+{
+    File.Delete(filePath);
+    data.File = false;
+    data.Func = "";
+    data.RData.Names.Clear();
+    data.RData.Vectors.Clear();
+    Results.Ok();
 });
 
 app.UseCors(devCorsPolicy);
