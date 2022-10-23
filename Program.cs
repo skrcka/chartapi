@@ -93,13 +93,14 @@ app.MapPost("/upload", async (HttpRequest request) =>
     if (formFile is null || formFile.Length == 0)
         return Results.BadRequest();
 
-    await using var stream = formFile.OpenReadStream();
+    using(Stream stream = formFile.OpenReadStream()){
 
-    var reader = new StreamContent(stream);
-    
-    using (FileStream fs = File.Create(filePath))
-    {
-        await reader.CopyToAsync(fs);
+        var reader = new StreamContent(stream);
+        
+        using (FileStream fs = File.Create(filePath))
+        {
+            await reader.CopyToAsync(fs);
+        }
     }
 
     data.File = true;
