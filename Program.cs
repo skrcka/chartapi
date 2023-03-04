@@ -117,6 +117,14 @@ app.MapGet("/reset", () =>
     Results.Ok();
 });
 
+app.MapGet("/resetfn", () =>
+{
+    data.Func = "";
+    data.RData.Names.Clear();
+    data.RData.Vectors.Clear();
+    Results.Ok();
+});
+
 app.UseCors(devCorsPolicy);
 app.MapControllers();
 app.Run();
